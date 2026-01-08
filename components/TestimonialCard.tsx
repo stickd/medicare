@@ -11,14 +11,18 @@ export default function TestimonialCard({ name, text }: TestimonialCardProps) {
   return (
     <motion.div
       whileHover={{
-        boxShadow: "0 0 25px rgba(59, 130, 246, 0.5)", // синій glow
-        scale: 1.02,
-        transition: { duration: 0.1 },
+        boxShadow: "0 8px 30px rgba(14, 165, 233, 0.4)", // м'який блакитний glow
+        scale: 1.03,
+        transition: { duration: 0.15 },
       }}
-      className="p-6 sm:p-8 bg-gradient-to-br from-blue-400/20 via-blue-500/20 to-blue-600/20 rounded-2xl border border-blue-200/30 backdrop-blur-md"
+      className="p-6 sm:p-8 bg-gradient-to-br from-blue-200/50 via-blue-300/50 to-teal-200/50 rounded-2xl border border-blue-300/40 backdrop-blur-lg"
     >
-      <p className="text-gray-100 text-sm sm:text-base mb-4 italic">"{text}"</p>
-      <h4 className="font-semibold text-white text-sm sm:text-base">{name}</h4>
+      <p className="text-gray-900 text-base sm:text-lg mb-4 leading-relaxed italic">
+        "{text}"
+      </p>
+      <h4 className="font-semibold text-blue-900 text-sm sm:text-base mt-2">
+        {name}
+      </h4>
     </motion.div>
   );
 }

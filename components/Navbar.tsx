@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiMenu, HiX } from "react-icons/hi";
 
 interface NavbarProps {
   onScroll?: (id: string) => void;
@@ -11,7 +10,7 @@ interface NavbarProps {
 export default function Navbar({ onScroll }: NavbarProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("home");
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
 
   const sections = [
     "home",
@@ -27,13 +26,14 @@ export default function Navbar({ onScroll }: NavbarProps) {
     features: "Послуги",
     about: "Про нас",
     testimonials: "Відгуки",
-    pricing: "Прайс",
+    pricing: "Ціна",
     footer: "Контакти",
   };
 
+  // Відстежуємо скрол
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const docHeight =
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
@@ -42,8 +42,11 @@ export default function Navbar({ onScroll }: NavbarProps) {
       let current = "home";
       sections.forEach((section) => {
         const el = document.getElementById(section);
-        if (el && scrollTop >= el.offsetTop - window.innerHeight / 2) {
-          current = section;
+        if (el) {
+          const offsetTop = el.offsetTop - 80;
+          if (scrollTop >= offsetTop - window.innerHeight / 2) {
+            current = section;
+          }
         }
       });
       setActiveSection(current);
@@ -54,13 +57,28 @@ export default function Navbar({ onScroll }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Відстежуємо ширину вікна
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      // 30 см ≈ 1134px
+      setShowNavbar(width > 1134);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // ініціалізація
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleClick = (section: string) => {
     const el = document.getElementById(section);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
-      setMenuOpen(false);
     }
   };
+
+  // Якщо ширина < 30см, navbar ховається
+  if (!showNavbar) return null;
 
   return (
     <>
@@ -74,8 +92,8 @@ export default function Navbar({ onScroll }: NavbarProps) {
       </div>
 
       {/* Desktop Navbar */}
-      <nav className="hidden sm:flex fixed top-0 left-0 w-full z-50 py-4 bg-white/20 backdrop-blur-lg border-b border-white/20 shadow-md">
-        <div className="flex items-center w-full max-w-6xl mx-4">
+      <nav className="fixed top-0 left-0 w-full z-50 py-4 bg-white/20 backdrop-blur-lg border-b border-white/20 shadow-md">
+        <div className="flex items-center w-full max-w-6xl mx-auto px-4">
           {/* Лого */}
           <span
             className="font-extrabold text-4xl text-blue-600 cursor-pointer select-none hover:text-blue-700 transition-colors duration-300"
@@ -86,10 +104,7 @@ export default function Navbar({ onScroll }: NavbarProps) {
           </span>
 
           {/* Навігаційні кнопки */}
-          <div
-            className="flex gap-12 ml-auto text-2xl font-semibold"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
+          <div className="flex gap-12 ml-auto text-2xl font-semibold">
             {sections.map((section) => {
               const isActive = activeSection === section;
               return (
@@ -98,73 +113,22 @@ export default function Navbar({ onScroll }: NavbarProps) {
                   onClick={() => handleClick(section)}
                   className={`relative transition-all duration-300 ${
                     isActive
-                      ? "text-blue-600"
+                      ? "text-blue-600 font-bold"
                       : "text-blue-800 hover:text-blue-500"
                   }`}
                 >
                   {labels[section]}
-                  {/* Подсветка только для активной секции */}
                   <motion.span
                     layoutId="underline"
                     className="absolute -bottom-1 left-0 w-full h-1 bg-blue-500 rounded-full"
                     initial={false}
                     animate={{ opacity: isActive ? 1 : 0 }}
                   />
-                  {/* Убрано подчеркивание при hover */}
                 </button>
               );
             })}
           </div>
         </div>
-      </nav>
-
-      {/* Mobile Navbar */}
-      <nav className="sm:hidden fixed top-0 left-0 w-full z-50 bg-white/25 backdrop-blur-lg shadow-md border-b border-white/20">
-        <div className="flex justify-between items-center px-4 py-3">
-          {/* Лого */}
-          <span
-            className="font-bold text-3xl text-blue-600 cursor-pointer select-none hover:text-blue-700 transition-colors duration-300"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-            onClick={() => handleClick("home")}
-          >
-            MediCare
-          </span>
-
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="text-blue-600 text-3xl"
-          >
-            {menuOpen ? <HiX /> : <HiMenu />}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="flex flex-col gap-4 px-4 pb-4 bg-white/90 backdrop-blur-md rounded-b-lg shadow-lg"
-            >
-              {sections.map((section) => {
-                const isActive = activeSection === section;
-                return (
-                  <button
-                    key={section}
-                    onClick={() => handleClick(section)}
-                    className={`text-left text-blue-800 py-2 px-3 rounded-lg transition-all duration-200 ${
-                      isActive
-                        ? "bg-blue-100 text-blue-600 font-bold shadow-md"
-                        : "hover:bg-blue-50 hover:text-blue-500 font-medium"
-                    } text-xl`}
-                  >
-                    {labels[section]}
-                  </button>
-                );
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
     </>
   );
