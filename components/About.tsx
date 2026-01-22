@@ -8,7 +8,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative text-blue-900 min-h-screen flex items-center py-20 px-4"
+      className="relative text-blue-900 min-h-screen flex items-center py-20 px-4 overflow-hidden"
       style={{
         background:
           "linear-gradient(to bottom, #E0F2FE 0%, #BAE6FD 50%, #7DD3FC 100%)",
@@ -42,7 +42,7 @@ export default function About() {
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative w-full h-80 md:h-[400px] rounded-2xl overflow-hidden shadow-lg"
+          className="relative w-full h-80 md:h-[400px] rounded-2xl overflow-hidden shadow-lg max-w-full"
         >
           <Image
             src="/1.jpg"
@@ -55,8 +55,8 @@ export default function About() {
       </div>
 
       {/* Декор */}
-      <div className="absolute -top-10 left-1/4 w-32 h-32 bg-white/50 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-10 right-1/3 w-48 h-48 bg-white/40 rounded-full blur-3xl"></div>
+      <div className="absolute -top-10 left-1/4 w-32 h-32 bg-white/50 rounded-full blur-3xl hidden sm:block" />
+      <div className="absolute -bottom-10 right-1/3 w-48 h-48 bg-white/40 rounded-full blur-3xl hidden sm:block" />
     </section>
   );
 }
